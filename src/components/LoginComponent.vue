@@ -5,6 +5,10 @@
         <div class="card-group mb-0">
           <div class="card p-4">
             <div class="card-body">
+              <div class="alert alert-danger" role="alert" v-if="erros">
+               {{erros}}
+              </div>
+
               <h1>Login</h1>
               <p class="text-muted">Entre na sua conta</p>
               <div class="input-group mb-3">
@@ -38,18 +42,46 @@
  </template>
   
   <script>
+  import axios from 'axios'
   export default {
     name: 'LoginComponent',
     data:()=>({
       email:'',
       password:'',
-      habilitar:false
+      habilitar:false,
+      erros:'',
+
     }),
 
     methods:{
       login(){
-        console.log('Email:'+this.email)
-        console.log('Senha:'+this.password)
+        let url = 'http://tarefasapi-8a24ead464dc.herokuapp.com/api/login'
+
+     let data = {
+         email :this.email,
+         password :this.password
+        }
+         let config = {
+           headers:{
+             'Content-Type':'application/x-www-form-urlencoded',
+             'Accept':'application/json'
+           }
+         }   
+         axios.post(url,data,config)
+              .then(response=>{
+                if(response.data.token){
+                  document.cookie = 'token='+response.data.token+';SameSite=Lax'
+                  this.$router.push('/telaInicial')
+                }else{
+                  this.erros = response.data.erro  
+                }
+             })
+              .catch( error=>{
+                this.erros = error.message
+                console.log(error.message)
+                
+             })  
+        
       }
     },
     updated(){
