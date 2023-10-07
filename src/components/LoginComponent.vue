@@ -8,16 +8,15 @@
               <div class="alert alert-danger" role="alert" v-if="erros">
                {{erros}}
               </div>
-
               <h1>Login</h1>
               <p class="text-muted">Entre na sua conta</p>
               <div class="input-group mb-3">
                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                <input type="email" class="form-control" placeholder="Email" v-model="email">
+                <input type="email" class="form-control" placeholder="Email" v-model="dados.email">
               </div>
               <div class="input-group mb-4">
                 <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                <input type="password" class="form-control" placeholder="Senha" v-model="password">
+                <input type="password" class="form-control" placeholder="Senha" v-model="dados.password">
               </div>
               <div class="row">
                 <div class="col-6">
@@ -46,8 +45,10 @@
   export default {
     name: 'LoginComponent',
     data:()=>({
-      email:'',
-      password:'',
+      dados:{
+        email:'',
+        password:''
+      },
       habilitar:false,
       erros:'',
 
@@ -55,37 +56,42 @@
 
     methods:{
       login(){
-        let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/login'
-
-     let data = {
-         email :this.email,
-         password :this.password
-        }
-         let config = {
-           headers:{
-             'Content-Type':'application/x-www-form-urlencoded',
-             'Accept':'application/json'
-           }
-         }   
-         axios.post(url,data,config)
-              .then(response=>{
-                if(response.data.token){
-                  document.cookie = 'token='+response.data.token+';SameSite=Lax'
-                  this.$router.push('/telaInicial')
-                }else{
-                  this.erros = response.data.erro  
+        if(this.dados.email != '' || this.dados.password != ''){
+          let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/login'    
+          let data = {
+              email :this.dados.email,
+              password :this.dados.password
+              }
+              let config = {
+                headers:{
+                  'Content-Type':'application/x-www-form-urlencoded',
+                  'Accept':'application/json'
                 }
-             })
-              .catch( error=>{
-                this.erros = error.message
-                console.log(error.message)
-                
-             })  
-        
+              }   
+              axios.post(url,data,config)
+                    .then(response=>{
+                      if(response.data.token){
+                        document.cookie = 'token='+response.data.token+';SameSite=Lax'
+                        this.$router.push('/telaInicial')
+                      }else{
+                        this.erros = response.data.erro  
+                      }
+                  })
+                    .catch( (error) => {
+                      this.erros = error.response.data.erro ?error.response.data.erro : "Ocorreu um erro inesperado, entre em contado com o desenvolvedor."
+                      
+                  })  
+          }
+          else{
+            this.erros = "Todos os compos devem ser preenchidos."
+          }
       }
     },
+    created(){
+        this.habilitar = true
+    },
     updated(){
-      if(this.email!='' && this.password!==''){
+      if(this.dados.email!='' && this.dados.password!==''){
         this.habilitar = false
       }else{
         this.habilitar = true
