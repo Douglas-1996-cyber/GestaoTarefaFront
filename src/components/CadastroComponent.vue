@@ -76,7 +76,7 @@
           email:'',
           password:'',
           habilitar:false,
-          urlBase: 'http://tarefasapi-8a24ead464dc.herokuapp.com/api/',
+          urlBase: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/',
           erros : ''
         }),
       

@@ -379,7 +379,7 @@ import axios from "axios"
             senhaNova:'',
             senhaAntiga:'',
             nomeUsuario:'Dayane',
-            urlBase:'http://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/',
+            urlBase:'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/',
             urlPaginacao:'page=1',
             buscar:'',
             teste:{},
@@ -412,7 +412,7 @@ import axios from "axios"
         methods: {
             exportarPDF(){
                     axios({
-                        url: 'http://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportar',
+                        url: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportar',
                         method: 'GET',
                         responseType: 'blob',
                         headers: {
@@ -431,7 +431,7 @@ import axios from "axios"
                     });
             },
             exportar(){
-                let url = 'http://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportacao'
+                let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportacao'
                 const config = {
                         headers:{
                         responseType:'blob',
@@ -455,7 +455,7 @@ import axios from "axios"
                     });
             },
             logout(){
-                let url = 'http://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/logout'
+                let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/logout'
             const config = {
              headers:{
                 'Content-Type':'application/x-www-form-urlencoded',
@@ -479,7 +479,7 @@ import axios from "axios"
             },
             me(){
 
-            let url = 'http://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/me'
+            let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/me'
             const config = {
              headers:{
                 'Content-Type':'application/x-www-form-urlencoded',
