@@ -55,7 +55,7 @@
 
     methods:{
       login(){
-        let url = 'http://tarefasapi-8a24ead464dc.herokuapp.com/api/login'
+        let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/login'
 
      let data = {
          email :this.email,
