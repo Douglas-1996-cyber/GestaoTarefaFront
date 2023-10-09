@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mx-auto p-5">
           <div class="col-md-8">
             <div class="card-group mb-0">
               <div class="card p-4">
@@ -26,7 +26,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card text-white bg-primary py-5 d-md-down-none" style="width:44%">
+              <div class="card text-white bg-primary py-5 d-md-down-none" style="width:100%">
                 <div class="card-body text-center">
                   <div>
                     <h2>Acesse</h2>
@@ -39,8 +39,6 @@
           </div>
         </div>
       </div>
-    
-
     
         <div class="modal fade" id="registrado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
           <div class="modal-dialog">
@@ -55,7 +53,6 @@
               </div>
               <div class="modal-body" v-else>
                {{erros}}. 
-             
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="$router.push('/')">Login</button>
