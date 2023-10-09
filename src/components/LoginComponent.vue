@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mx-auto p-5 ">
       <div class="col-md-8">
         <div class="card-group mb-0">
           <div class="card p-4">
@@ -25,14 +25,16 @@
               </div>
             </div>
           </div>
-          <div class="card text-white bg-primary py-5 d-md-down-none" style="width:44%">
+         
+           <div class="card text-white bg-primary py-20 d-md-down-none" style="width:100%">
             <div class="card-body text-center">
               <div>
                 <h2>Inscrever-se</h2>
                 <p>Este sistema irá lhe propocionar uma forma de organizar suas tarefas, totalmente de graça</p>
                 <router-link to="/cadastro"><button type="button" class="btn btn-primary active mt-3 botao">Inscreva-se agora!</button></router-link>
               </div>
-            </div>
+       
+           </div>
           </div>
         </div>
       </div>

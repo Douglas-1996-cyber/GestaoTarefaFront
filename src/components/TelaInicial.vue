@@ -66,6 +66,7 @@
                         <tr>
                             <th>Nome</th>
                             <th>Status</th>
+                            <th>Atrasado</th>
                             <th>Prioridade</th>
                             <th>Data Limite</th>
                             <th>Data conclusão</th>
@@ -77,6 +78,7 @@
                        <tr v-for="tarefa in tarefas.data" v-bind:key="tarefa">
                             <td>{{ tarefa.name }}</td>
                             <td>{{verificaStatus(tarefa.status) }}</td>
+                            <td>{{verificaAtrasado(tarefa.late) }}</td>
                             <td>{{verficaPrioridade(tarefa.level) }}</td>
                             <td>{{formataDataTempo(tarefa.data_limite)}}</td>
                             <td>{{ tarefa.data_conclusao?formataDataTempo(tarefa.data_conclusao):'' }}</td>
@@ -553,6 +555,9 @@ import axios from "axios"
             },
             verificaStatus(status){
                 return status == 0 ?"Pendente":"Concluido" 
+            },
+            verificaAtrasado(atraso){
+                return atraso == 0 ?"Não":"Sim" 
             },
             verficaPrioridade(level){
                 return level == 0 ?"Baixa":"Alta" 
