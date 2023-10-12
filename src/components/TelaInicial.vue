@@ -519,6 +519,7 @@ import axios from "axios"
             },
             montar(busca){
                     let url
+                    let cont = 0
                     if(busca !=undefined){
                     url = this.urlBase +'tarefa?'+this.urlPaginacao+'&search='+busca
                     this.buscar=busca
@@ -536,18 +537,26 @@ import axios from "axios"
                     .get(url,config)
                     .then((res) => {
                         this.tarefas = res.data;
+                        this.tarefas.data.forEach((elemento)=>{
+                         if(elemento.late == 1){
+                            cont++
+                          }
+                        
+                        })
+                        if(cont >=1){
+                        document.getElementsByTagName("title")[0].innerText = 'Tarefas(Em atrasado)'
+                        }else{
+                            document.getElementsByTagName("title")[0].innerText = 'Tarefas'
+                          }
                      
-                       
                     })
                     .catch(error=>{
                         if(error.response.status == 401){
                             this.autorizado = false
                        
-                        }
-                      
+                        }  
 
                     });
-                   
                
                     
                 },
@@ -745,9 +754,8 @@ import axios from "axios"
                     
                         })
                     },
-            inicial(){
-                this.$router.replace('/')
-            }
+      
+          
 
         },
         watch:{
@@ -760,6 +768,8 @@ import axios from "axios"
         created(){
             this.me()
             this.montar()
+
+           
         },
         updated(){
           if(this.nvTarefa.nome != '' && this.nvTarefa.data_limite !=undefined && this.nvTarefa.nivel != undefined && this.nvTarefa.description != '' ){
