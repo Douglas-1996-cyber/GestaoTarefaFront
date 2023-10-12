@@ -60,8 +60,10 @@
             </nav>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <div v-if="tarefas.total <= 0">Nenhuma tarefa cadastrada</div>
+            <div class="table-responsive" v-else>
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0"  >
+                  
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -73,9 +75,9 @@
                             <th>Ação</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        
+                    <tbody  > 
                        <tr v-for="tarefa in tarefas.data" v-bind:key="tarefa">
+                        
                             <td>{{ tarefa.name }}</td>
                             <td>{{verificaStatus(tarefa.status) }}</td>
                             <td>{{verificaAtrasado(tarefa.late) }}</td>
@@ -95,8 +97,9 @@
                             </td>
 
                         </tr>
-
+                
                     </tbody>
+                  
                 </table>
             </div>
      
@@ -197,7 +200,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea1" class="form-label">Descrição</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" maxlength="240"
                         v-model="description"></textarea>
                     </div>
                 </div>
@@ -222,8 +225,8 @@
                         <input type="text" class="form-control" id="exampleFormControlInput1" v-model="nvTarefa.nome" required>
                     </div>
                     <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="">Escolha um nivel de prioridade</label>
                     <select class="form-select" aria-label="Default select example" v-model="nvTarefa.nivel">
-                        <option disabled selected value="">Escolha um nivel de prioridade</option>
                         <option value="0">Baixa</option>
                         <option value="1">Alta</option>
                     </select>
@@ -235,7 +238,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea1" class="form-label">Descrição</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" required
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" maxlength="240"  required 
                             v-model="nvTarefa.description"></textarea>
                     </div>
                 </div>
@@ -395,23 +398,29 @@ import axios from "axios"
             sucesso:'',
             idUsuario:'',
             autorizado:true,
-            resultadoAlterarSenha:{}
+            resultadoAlterarSenha:{},
+    
        
 
         }),
         computed:{
             token(){
-                let token = document.cookie.split(';').find(indice=>{
+               let token = document.cookie.split(';').find(indice=>{
                     return indice.includes('token=')
                 })
-              
+              if(token == undefined){
+                return false
+              }else{
                 token = token.split('=')
                 token = 'Bearer '+token[1]
                 return token
+              }
             },
             
             },
         methods: {
+ 
+
             exportarPDF(){
                     axios({
                         url: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportar',
@@ -480,7 +489,7 @@ import axios from "axios"
 
             },
             me(){
-
+            if(this.token){
             let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/me'
             const config = {
              headers:{
@@ -494,13 +503,16 @@ import axios from "axios"
                 .post(url,data,config)
                 .then((response) => {
                     this.nomeUsuario = response.data.name
-      
                 })
                 .catch(error=>{
                         if(error.response.status == 401){
-                         this.$router.replace('/')
+                            this.$router.push('/')
                         }
                 });
+   
+            }else{
+                this.$router.replace('/')
+            }
             },
             verificarAutorizacao(){
            console.log(this.autorizado)
@@ -524,7 +536,7 @@ import axios from "axios"
                     .get(url,config)
                     .then((res) => {
                         this.tarefas = res.data;
-                        console.log(res.data)
+                     
                        
                     })
                     .catch(error=>{
@@ -535,6 +547,8 @@ import axios from "axios"
                       
 
                     });
+                   
+               
                     
                 },
                 paginar(l){
@@ -693,6 +707,7 @@ import axios from "axios"
                           setTimeout(() => {
                             this.sucesso = ''
                             }, "5000") 
+                    this.urlPaginacao='page=1'
                      this.montar()
                     console.log(response);
                     })
@@ -704,7 +719,7 @@ import axios from "axios"
                     });
                 
                     },
-                    alterarSenha(){
+            alterarSenha(){
                         let data = {
                     _method:'patch',
                     senha_antiga:this.senhaAntiga,
@@ -745,7 +760,6 @@ import axios from "axios"
         created(){
             this.me()
             this.montar()
-         
         },
         updated(){
           if(this.nvTarefa.nome != '' && this.nvTarefa.data_limite !=undefined && this.nvTarefa.nivel != undefined && this.nvTarefa.description != '' ){
@@ -759,6 +773,7 @@ import axios from "axios"
           } else{
             this.alterarHabilitar = true
           }
+          this.me()
         }
 
     }
@@ -778,5 +793,9 @@ import axios from "axios"
 
     li a:hover {
         cursor: pointer;
+    }
+    .alinhamento{
+        text-align: center;
+        width: 100%;
     }
 </style>

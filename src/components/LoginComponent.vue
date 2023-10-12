@@ -20,7 +20,10 @@
               </div>
               <div class="row">
                 <div class="col-6">
-                  <button type="button" class="btn btn-primary px-4" :disabled="habilitar" @click="login">Login</button>
+                  <button type="button" class="btn btn-primary px-4" :disabled="habilitar" @click="login">
+                    Login
+                  </button>
+                  <div class="lds-ellipsis" v-if="loading"><div></div><div></div><div></div><div></div></div>
                 </div>
               </div>
             </div>
@@ -53,11 +56,13 @@
       },
       habilitar:false,
       erros:'',
+      loading:false
 
     }),
 
     methods:{
       login(){
+        this.loading = true
         if(this.dados.email != '' || this.dados.password != ''){
           let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/login'    
           let data = {
@@ -80,9 +85,12 @@
                       }
                   })
                     .catch( (error) => {
-                      this.erros = error.response.data.erro ?error.response.data.erro : "Ocorreu um erro inesperado, entre em contado com o desenvolvedor."
+                      this.erros = error.response.data.erro ? error.response.data.erro : "Ocorreu um erro inesperado, entre em contado com o desenvolvedor."
+                      this.loading = false
                       
                   })  
+  
+             
           }
           else{
             this.erros = "Todos os compos devem ser preenchidos."
@@ -107,5 +115,64 @@
    .botao:hover{
         background-color: rgb(5, 96, 231);
        }
+
+       .lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgb(5, 96, 231);
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
+
+
   </style>
   
