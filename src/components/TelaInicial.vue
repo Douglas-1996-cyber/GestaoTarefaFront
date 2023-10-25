@@ -467,6 +467,8 @@ import axios from "axios"
                         url: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportar',
                         method: 'GET',
                         responseType: 'blob',
+                        'Accept' : 'application/json',
+                        'Authorization' : this.token
                         
                     }).then((response) => {
                         var fileURL = window.URL.createObjectURL(new Blob([response.data]));
@@ -484,6 +486,8 @@ import axios from "axios"
                 const config = {
                         headers:{
                         responseType:'blob',
+                        'Accept' : 'application/json',
+                        'Authorization' : this.token
                         } 
                     }  
                     axios
@@ -507,6 +511,8 @@ import axios from "axios"
             const config = {
              headers:{
                 'Content-Type':'application/x-www-form-urlencoded',
+                'Accept' : 'application/json',
+                        'Authorization' : this.token
              }   
             }
             let data = {}
@@ -529,6 +535,8 @@ import axios from "axios"
             const config = {
              headers:{
                 'Content-Type':'application/x-www-form-urlencoded',
+                'Accept' : 'application/json',
+                        'Authorization' : this.token
              }   
             }
             let data = {}
@@ -563,6 +571,8 @@ import axios from "axios"
                     const config = {
                         headers:{
                             'Content-Type':'application/x-www-form-urlencoded',
+                            'Accept' : 'application/json',
+                        'Authorization' : this.token
                         } 
                     }  
                     axios
@@ -639,6 +649,8 @@ import axios from "axios"
                     const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
+                        'Accept' : 'application/json',
+                        'Authorization' : this.token
 
                     }
                     }
@@ -670,6 +682,8 @@ import axios from "axios"
                     const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
+                        'Accept' : 'application/json',
+                        'Authorization' : this.token
                     }
                     }
             
@@ -706,6 +720,8 @@ import axios from "axios"
                     const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
+                        'Accept' : 'application/json',
+                        'Authorization' : this.token
                     }
                     }
             
@@ -734,6 +750,8 @@ import axios from "axios"
                 const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
+                        'Accept' : 'application/json',
+                        'Authorization' : this.token
                     }
                     }
              axios
@@ -764,6 +782,8 @@ import axios from "axios"
                     const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
+                        'Accept' : 'application/json',
+                        'Authorization' : this.token
                     }
                     }
             
@@ -812,7 +832,7 @@ import axios from "axios"
     }
 
 
-    axios.interceptors.request.use(
+   /* axios.interceptors.request.use(
     config =>{
         config.headers.Accept = 'application/json'
         let token = document.cookie.split(';').find(indice =>{
@@ -845,7 +865,7 @@ axios.interceptors.response.use(
         }
         return Promise.reject(error)
     }
-)    
+)  */  
 </script>
 
 <style scoped>
