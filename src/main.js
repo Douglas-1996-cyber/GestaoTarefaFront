@@ -8,7 +8,7 @@ import axios from "axios"
 createApp(App).use(store).use(router).mount('#app')
 
 
-axios.interceptors.request.use(
+/*axios.interceptors.request.use(
     config =>{
         config.headers.Accept = 'application/json'
         
@@ -43,7 +43,7 @@ axios.interceptors.response.use(
         }
         return Promise.reject(error)
     }
-)
+)*/
 
 
 
