@@ -424,7 +424,7 @@ import axios from "axios"
             senhaAntiga:'',
             nomeUsuario:'Dayane',
             urlBase:'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/',
-            urlPaginacao:'page=1',
+            urlPaginacao:'',
             buscar:'',
             teste:{},
             name:'',
@@ -467,9 +467,6 @@ import axios from "axios"
                         url: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportar',
                         method: 'GET',
                         responseType: 'blob',
-                        headers: {
-                            Authorization: this.token
-                        }
                         
                     }).then((response) => {
                         var fileURL = window.URL.createObjectURL(new Blob([response.data]));
@@ -487,8 +484,6 @@ import axios from "axios"
                 const config = {
                         headers:{
                         responseType:'blob',
-                        'Authorization': this.token
-
                         } 
                     }  
                     axios
@@ -512,9 +507,6 @@ import axios from "axios"
             const config = {
              headers:{
                 'Content-Type':'application/x-www-form-urlencoded',
-                'Accept':'application/json',
-                'Authorization': this.token
-
              }   
             }
             let data = {}
@@ -537,9 +529,6 @@ import axios from "axios"
             const config = {
              headers:{
                 'Content-Type':'application/x-www-form-urlencoded',
-                'Accept':'application/json',
-                'Authorization': this.token
-
              }   
             }
             let data = {}
@@ -549,19 +538,10 @@ import axios from "axios"
                     this.nomeUsuario = response.data.name
                 })
                 .catch(error=>{
-
-                        if(error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed'){
-
-                        if(error.response.status == 401){
+                if(error.response.status == 401 || error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed'){
                             this.$router.push('/')
-                        }
                     }
-              if(error.response.status == 401){
-                            this.$router.push('/')
-                        }
-
                 });
-   
             }else{
                 this.$router.replace('/')
             }
@@ -570,24 +550,19 @@ import axios from "axios"
            console.log(this.autorizado)
             },
             montar(busca){
-
                 this.loading = true
-
-
                     let url
                     let cont = 0
                     if(busca !=undefined){
-                    url = this.urlBase +'tarefa?'+this.urlPaginacao+'&search='+busca
-                    this.buscar=busca
+
+                    url = this.urlBase +'tarefa?search='+busca+'&page=1'
+                    console.log(url)
                     }else{
                     url = this.urlBase +'tarefa?'+this.urlPaginacao
                     }
                     const config = {
                         headers:{
                             'Content-Type':'application/x-www-form-urlencoded',
-                            'Accept':'application/json',
-                            'Authorization': this.token
-
                         } 
                     }  
                     axios
@@ -597,18 +572,16 @@ import axios from "axios"
                         this.tarefas.data.forEach((elemento)=>{
                          if(elemento.late == 1){
                             cont++
-                          }
-                        
+                          } 
                         })
                         if(cont >=1){
                         document.getElementsByTagName("title")[0].innerText = 'Tarefas(Em atrasado)'
                         }else{
                             document.getElementsByTagName("title")[0].innerText = 'Tarefas'
-                          }
-
-
-                          this.loading = false
-
+                        }
+                        
+                        this.loading = false
+                        console.log(this.tarefas.data)  
                      
 
                     })
@@ -628,12 +601,8 @@ import axios from "axios"
                 paginar(l){
                 if(l.url != null){
                 this.urlPaginacao = l.url.split('?')[1]
-                console.log(this.urlPaginacao)
-                if(this.buscar!=''){
-                this.montar(this.buscar)
-                }else{
                 this.montar()
-                }
+
             }
             },
 
@@ -671,14 +640,6 @@ import axios from "axios"
                     headers:{
                         'Content-Type':'multipart/form-data',
 
-
-
-                        'Accept':'application/json', 
-                        'Authorization': this.token,
-
-
-                        'Accept':'application/json', 
-
                     }
                     }
             
@@ -709,10 +670,6 @@ import axios from "axios"
                     const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
-                        'Accept':'application/json', 
-                        'Authorization': this.token
-
-
                     }
                     }
             
@@ -749,10 +706,6 @@ import axios from "axios"
                     const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
-                        'Accept':'application/json', 
-                        'Authorization': this.token
-
-
                     }
                     }
             
@@ -781,8 +734,6 @@ import axios from "axios"
                 const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
-                        'Accept':'application/json', 
-                        'Authorization': this.token
                     }
                     }
              axios
@@ -813,8 +764,6 @@ import axios from "axios"
                     const config = {
                     headers:{
                         'Content-Type':'multipart/form-data',
-                        'Accept':'application/json', 
-                        'Authorization': this.token
                     }
                     }
             
@@ -830,8 +779,6 @@ import axios from "axios"
                     
                         })
                     },
-      
-          
 
         },
         watch:{
