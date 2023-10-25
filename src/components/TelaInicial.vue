@@ -1,6 +1,5 @@
 <template>
     <div class="card shadow mb-4">
-
         <div class="card-header py-3 text-start">
             <nav class="navbar bg-body-tertiary ">
                 <div class="container-fluid">
@@ -61,11 +60,7 @@
             </nav>
         </div>
 
-        
-        <div class="card-body">
-           
-            <div v-if="tarefas.total <= 0">Nenhuma tarefa cadastrada</div>
-            <div class="table-responsive" v-else>
+
 
         <div class="card-body">
             <div v-if="tarefas.total <= 0">Nenhuma tarefa cadastrada</div>
@@ -85,9 +80,10 @@
                         </tr>
                     </thead>
 
+
                     <tbody> 
 
-                       <tr v-for="tarefa in tarefas.data" v-bind:key="tarefa">
+                  <tr v-for="tarefa in tarefas.data" v-bind:key="tarefa">
                         
                             <td>{{ tarefa.name }}</td>
                             <td>{{verificaStatus(tarefa.status) }}</td>
@@ -112,6 +108,7 @@
                     </tbody>
                   
                 </table>
+
                 <span  v-if="loading" class="loader"></span>
 
             </div>
@@ -357,6 +354,7 @@
         </div>
     </div>
       <!-- Alterar Senha -->
+
         <div class="modal fade" id="alterarSenhaStatic" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -382,7 +380,33 @@
             </div>
             </div>
         </div>
-    </div>
+ 
+
+    <div class="modal fade" id="alterarSenhaStatic" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Alterar Senha</h1>
+            </div>
+            <div  v-if="resultadoAlterarSenha.erros">
+            <div class="modal-body">
+                {{ resultadoAlterarSenha.erros }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>
+            </div>
+        </div>
+            <div v-if="resultadoAlterarSenha.sucesso">
+            <div class="modal-body">
+                {{ resultadoAlterarSenha.sucesso }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="inicial">Entendi</button>
+            </div>
+        </div>
+            </div>
+        </div>
+
     </div>
 
 </template>
@@ -414,7 +438,9 @@ import axios from "axios"
             idUsuario:'',
             autorizado:true,
             resultadoAlterarSenha:{},
+
             loading:false
+
        
 
         }),
@@ -523,12 +549,17 @@ import axios from "axios"
                     this.nomeUsuario = response.data.name
                 })
                 .catch(error=>{
+
                         if(error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed'){
 
                         if(error.response.status == 401){
                             this.$router.push('/')
                         }
                     }
+              if(error.response.status == 401){
+                            this.$router.push('/')
+                        }
+
                 });
    
             }else{
@@ -539,7 +570,9 @@ import axios from "axios"
            console.log(this.autorizado)
             },
             montar(busca){
+
                 this.loading = true
+
 
                     let url
                     let cont = 0
@@ -573,6 +606,7 @@ import axios from "axios"
                             document.getElementsByTagName("title")[0].innerText = 'Tarefas'
                           }
 
+
                           this.loading = false
 
                      
@@ -583,7 +617,6 @@ import axios from "axios"
                             this.autorizado = false
 
                             this.loading = false
-
 
                        
                         }  
@@ -639,8 +672,12 @@ import axios from "axios"
                         'Content-Type':'multipart/form-data',
 
 
+
                         'Accept':'application/json', 
-                        'Authorization': this.token
+                        'Authorization': this.token,
+
+
+                        'Accept':'application/json', 
 
                     }
                     }
@@ -674,6 +711,7 @@ import axios from "axios"
                         'Content-Type':'multipart/form-data',
                         'Accept':'application/json', 
                         'Authorization': this.token
+
 
                     }
                     }
@@ -713,6 +751,7 @@ import axios from "axios"
                         'Content-Type':'multipart/form-data',
                         'Accept':'application/json', 
                         'Authorization': this.token
+
 
                     }
                     }
@@ -825,6 +864,7 @@ import axios from "axios"
 
     }
 </script>
+
 <style scoped>
 .loader {
   color: rgb(5, 96, 231);
@@ -879,6 +919,7 @@ import axios from "axios"
   100% { transform: rotate(360deg) }
 }
  
+
     i:hover {
         cursor: pointer;
         color: blue;
