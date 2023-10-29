@@ -462,13 +462,21 @@ import axios from "axios"
         methods: {
 
             exportarPDF() {
+                axios.interceptors.request.use(
+                config =>{
+                    config.headers.Accept = 'application/json'
+                    config.headers.Authorization = this.token
+                    return config
+                        },
+                        error =>{
+                            return Promise.reject(error)
+                        }
+                    )
                     axios({
                         url: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportar',
                         method: 'GET',
                         responseType: 'blob',
-                        'Accept': 'application/json',
-                        'Authorization': this.token
-
+                        
                     }).then((response) => {
                         var fileURL = window.URL.createObjectURL(new Blob([response.data]));
                         var fileLink = document.createElement('a');
@@ -502,9 +510,11 @@ import axios from "axios"
 
                         })
                         .catch(error => {
-                            console.log(error)
-
-                        });
+                            this.error = error.response.data.msg ? error.response.data.msg : 'Um erro inesperado ocorreu'
+                            setTimeout(() => {
+                                this.error = ''
+                            }, "5000")
+                        })
                 },
 
                 logout() {
@@ -519,8 +529,7 @@ import axios from "axios"
                     let data = {}
                     axios
                         .post(url, data, config)
-                        .then((response) => {
-                            console.log(response)
+                        .then(() => {
                             this.$router.push('/')
                         })
                         .catch(() => {
@@ -564,9 +573,7 @@ import axios from "axios"
                     }
                 },
 
-                verificarAutorizacao() {
-                    console.log(this.autorizado)
-                },
+           
 
                 montar(busca) {
                     this.loading = true
@@ -575,7 +582,7 @@ import axios from "axios"
                     if (busca != undefined) {
 
                         url = this.urlBase + 'tarefa?search=' + busca + '&page=1'
-                        console.log(url)
+                       
                     } else {
                         url = this.urlBase + 'tarefa?' + this.urlPaginacao
                     }
@@ -651,7 +658,7 @@ import axios from "axios"
                 },
 
                 alterar() {
-                    console.log(this.id)
+    
                     let data = {
                         name: this.name,
                         data_limite: this.data_limite,
@@ -668,8 +675,8 @@ import axios from "axios"
                     }
 
                     axios.post(this.urlBase + 'tarefa/' + this.id, data, config)
-                        .then(response => {
-                            console.log(response)
+                        .then(() => {
+                      
                             this.sucesso = "Tarefa atualizada com sucesso"
                             setTimeout(() => {
                                 this.sucesso = ''
@@ -702,8 +709,8 @@ import axios from "axios"
                     }
 
                     axios.post(this.urlBase + 'concluir/' + this.id, data, config)
-                        .then(response => {
-                            console.log(response)
+                        .then(() => {
+                      
                             this.sucesso = "Tarefa concluida com sucesso"
                             setTimeout(() => {
                                 this.sucesso = ''
@@ -726,7 +733,6 @@ import axios from "axios"
                 },
 
                 salvar() {
-                    console.log(this.nvTarefa)
                     let data = {
                         name: this.nvTarefa.nome,
                         data_limite: this.nvTarefa.data_limite,
@@ -742,8 +748,8 @@ import axios from "axios"
                     }
 
                     axios.post(this.urlBase + 'tarefa', data, config)
-                        .then(response => {
-                            console.log(response)
+                        .then(() => {
+                          
                             this.sucesso = "Tarefa cadastrada com sucesso"
                             setTimeout(() => {
                                 this.sucesso = ''
@@ -764,7 +770,7 @@ import axios from "axios"
                 },
 
                 excluir() {
-                    console.log(this.id)
+      
                     const config = {
                         headers: {
                             'Content-Type': 'multipart/form-data',
@@ -774,14 +780,13 @@ import axios from "axios"
                     }
                     axios
                         .delete(this.urlBase + "tarefa/" + this.id, config)
-                        .then((response) => {
+                        .then(() => {
                             this.sucesso = "Tarefa excluida com sucesso"
                             setTimeout(() => {
                                 this.sucesso = ''
                             }, "5000")
                             this.urlPaginacao = 'page=1'
                             this.montar()
-                            console.log(response);
                         })
                         .catch((error) => {
                             this.error = error.response.data.msg ? error.response.data.msg : 'Um erro inesperado ocorreu'
@@ -807,8 +812,8 @@ import axios from "axios"
                     }
 
                     axios.post(this.urlBase + 'senha', data, config)
-                        .then(response => {
-                            console.log(response)
+                        .then(() => {
+                 
                             this.resultadoAlterarSenha.sucesso = "Senha alterada com sucesso"
 
 
