@@ -60,8 +60,6 @@
             </nav>
         </div>
 
-
-
         <div class="card-body">
             <div v-if="tarefas.total <= 0">Nenhuma tarefa cadastrada</div>
             <div class="table-responsive" v-else>
@@ -445,6 +443,7 @@ import axios from "axios"
 
         }),
         computed:{
+
             token(){
                let token = document.cookie.split(';').find(indice=>{
                     return indice.includes('token=')
@@ -459,380 +458,399 @@ import axios from "axios"
             },
             
             },
+            
         methods: {
- 
 
-            exportarPDF(){
+            exportarPDF() {
                     axios({
                         url: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportar',
                         method: 'GET',
                         responseType: 'blob',
-                        'Accept' : 'application/json',
-                        'Authorization' : this.token
-                        
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+
                     }).then((response) => {
                         var fileURL = window.URL.createObjectURL(new Blob([response.data]));
                         var fileLink = document.createElement('a');
-                    
+
                         fileLink.href = fileURL;
                         fileLink.setAttribute('download', 'file.pdf');
                         document.body.appendChild(fileLink);
-                    
+
                         fileLink.click();
                     });
-            },
-            exportar(){
-                let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportacao'
-                const config = {
-                        headers:{
-                        responseType:'blob',
-                        'Accept' : 'application/json',
-                        'Authorization' : this.token
-                        } 
-                    }  
-                    axios
-                    .get(url,config)
-                    .then((res) => {
-                        const fileURL = window.URL.createObjectURL(new Blob([res.data])) //montou a url
-                        var filelink = document.createElement('a')//montou o link
-                        filelink.href = fileURL
-                        filelink.setAttribute('download','lista_de_tarefas.csv')
-                        document.body.appendChild(filelink)
-                        filelink.click()
-                       
-                    })
-                    .catch(error=>{
-                       console.log(error)
+                },
 
-                    });
-            },
-            logout(){
-                let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/logout'
-            const config = {
-             headers:{
-                'Content-Type':'application/x-www-form-urlencoded',
-                'Accept' : 'application/json',
-                        'Authorization' : this.token
-             }   
-            }
-            let data = {}
-            axios
-                .post(url,data,config)
-                .then((response) => {
-                   console.log(response)
-                   this.$router.push('/')
-                })
-                .catch(() => {
-                    (erros) => {
-                    console.log(erros);
-                    };
-                });
-
-            },
-            me(){
-            if(this.token){
-            let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/me'
-            const config = {
-             headers:{
-                'Content-Type':'application/x-www-form-urlencoded',
-                'Accept' : 'application/json',
-                        'Authorization' : this.token
-             }   
-            }
-            let data = {}
-            axios
-                .post(url,data,config)
-                .then((response) => {
-                    this.nomeUsuario = response.data.name
-                })
-                .catch(error=>{
-                if(error.response.status == 401 || error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed'){
-                            this.$router.push('/')
+                exportar() {
+                    let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/exportacao'
+                    const config = {
+                        headers: {
+                            responseType: 'blob',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
                     }
-                });
-            }else{
-                this.$router.replace('/')
-            }
-            },
-            verificarAutorizacao(){
-           console.log(this.autorizado)
-            },
-            montar(busca){
-                this.loading = true
+                    axios
+                        .get(url, config)
+                        .then((res) => {
+                            const fileURL = window.URL.createObjectURL(new Blob([res.data])) //montou a url
+                            var filelink = document.createElement('a') //montou o link
+                            filelink.href = fileURL
+                            filelink.setAttribute('download', 'lista_de_tarefas.csv')
+                            document.body.appendChild(filelink)
+                            filelink.click()
+
+                        })
+                        .catch(error => {
+                            console.log(error)
+
+                        });
+                },
+
+                logout() {
+                    let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/logout'
+                    const config = {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+                    let data = {}
+                    axios
+                        .post(url, data, config)
+                        .then((response) => {
+                            console.log(response)
+                            this.$router.push('/')
+                        })
+                        .catch(() => {
+                            (erros) => {
+                                console.log(erros);
+                            };
+                        });
+
+                },
+
+                me() {
+                    if (this.token) {
+                        let url = 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/v1/me'
+                        const config = {
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'Accept': 'application/json',
+                                'Authorization': this.token
+                            }
+                        }
+                        let data = {}
+                        axios
+                            .post(url, data, config)
+                            .then((response) => {
+                                this.nomeUsuario = response.data.name
+                            })
+                            .catch(error => {
+                                if (error.response.status == 401 && error.response.data.message == 'Token has expired') {
+                                    axios.post('https://tarefasapi-8a24ead464dc.herokuapp.com/api/refresh/')
+                                        .then(response => {
+                                            document.cookie = 'token=' + response.data.token
+                                            window.location.reload()
+                                        })
+                                } else if (error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed') {
+                                    this.$router.push('/')
+                                }
+                            })
+
+                    } else {
+                        this.$router.replace('/')
+                    }
+                },
+
+                verificarAutorizacao() {
+                    console.log(this.autorizado)
+                },
+
+                montar(busca) {
+                    this.loading = true
                     let url
                     let cont = 0
-                    if(busca !=undefined){
+                    if (busca != undefined) {
 
-                    url = this.urlBase +'tarefa?search='+busca+'&page=1'
-                    console.log(url)
-                    }else{
-                    url = this.urlBase +'tarefa?'+this.urlPaginacao
+                        url = this.urlBase + 'tarefa?search=' + busca + '&page=1'
+                        console.log(url)
+                    } else {
+                        url = this.urlBase + 'tarefa?' + this.urlPaginacao
                     }
                     const config = {
-                        headers:{
-                            'Content-Type':'application/x-www-form-urlencoded',
-                            'Accept' : 'application/json',
-                        'Authorization' : this.token
-                        } 
-                    }  
-                    axios
-                    .get(url,config)
-                    .then((res) => {
-                        this.tarefas = res.data;
-                        this.tarefas.data.forEach((elemento)=>{
-                         if(elemento.late == 1){
-                            cont++
-                          } 
-                        })
-                        if(cont >=1){
-                        document.getElementsByTagName("title")[0].innerText = 'Tarefas(Em atrasado)'
-                        }else{
-                            document.getElementsByTagName("title")[0].innerText = 'Tarefas'
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
                         }
-                        
-                        this.loading = false
-                        console.log(this.tarefas.data)  
-                     
-
-                    })
-                    .catch(error=>{
-                        if(error.response.status == 401){
-                            this.autorizado = false
+                    }
+                    axios
+                        .get(url, config)
+                        .then((res) => {
+                            this.tarefas = res.data;
+                            this.tarefas.data.forEach((elemento) => {
+                                if (elemento.late == 1) {
+                                    cont++
+                                }
+                            })
+                            if (cont >= 1) {
+                                document.getElementsByTagName("title")[0].innerText = 'Tarefas(Em atrasado)'
+                            } else {
+                                document.getElementsByTagName("title")[0].innerText = 'Tarefas'
+                            }
 
                             this.loading = false
 
-                       
-                        }  
 
-                    });
-               
-                    
+                        })
+                        .catch(error => {
+                            if (error.response.status == 401) {
+                                this.autorizado = false
+
+                                this.loading = false
+
+
+                            }
+
+                        });
+
+
                 },
-                paginar(l){
-                if(l.url != null){
-                this.urlPaginacao = l.url.split('?')[1]
+
+                paginar(l) {
+                    if (l.url != null) {
+                        this.urlPaginacao = l.url.split('?')[1]
+                        this.montar()
+
+                    }
+                },
+
+                formataDataTempo(data_americana) {
+                    let data_brasileira = data_americana.split('-').reverse().join('/');
+                    return data_brasileira
+                },
+                verificaStatus(status) {
+                    return status == 0 ? "Pendente" : "Concluido"
+                },
+                verificaAtrasado(atraso) {
+                    return atraso == 0 ? "Não" : "Sim"
+                },
+                verficaPrioridade(level) {
+                    return level == 0 ? "Baixa" : "Alta"
+                },
+
+                verificarAtualizacao(tarefa) {
+
+                    this.teste = tarefa
+                    this.name = tarefa.name
+                    this.description = tarefa.description
+                    this.data_limite = tarefa.data_limite
+                    this.id = tarefa.id
+                },
+
+                alterar() {
+                    console.log(this.id)
+                    let data = {
+                        name: this.name,
+                        data_limite: this.data_limite,
+                        description: this.description,
+                        _method: 'put'
+                    }
+                    const config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+
+                        }
+                    }
+
+                    axios.post(this.urlBase + 'tarefa/' + this.id, data, config)
+                        .then(response => {
+                            console.log(response)
+                            this.sucesso = "Tarefa atualizada com sucesso"
+                            setTimeout(() => {
+                                this.sucesso = ''
+                            }, "5000")
+                            this.montar()
+                        })
+                        .catch(error => {
+                            this.error = error.response.data.msg ? error.response.data.msg : 'Um erro inesperado ocorreu'
+                            setTimeout(() => {
+                                this.error = ''
+                            }, "5000")
+                        })
+
+                },
+
+                verificarConclusao(tarefa) {
+                    this.id = tarefa.id
+                },
+
+                concluir() {
+                    let data = {
+                        _method: 'patch'
+                    }
+                    const config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+
+                    axios.post(this.urlBase + 'concluir/' + this.id, data, config)
+                        .then(response => {
+                            console.log(response)
+                            this.sucesso = "Tarefa concluida com sucesso"
+                            setTimeout(() => {
+                                this.sucesso = ''
+                            }, "5000")
+                            this.montar()
+                        })
+                        .catch(error => {
+                            this.error = error.response.data.msg ? error.response.data.msg : 'Um erro inesperado ocorreu'
+                            setTimeout(() => {
+                                this.error = ''
+                            }, "5000")
+                        })
+
+                },
+
+                exibir(tarefa) {
+
+                    this.tarefa = tarefa
+
+                },
+
+                salvar() {
+                    console.log(this.nvTarefa)
+                    let data = {
+                        name: this.nvTarefa.nome,
+                        data_limite: this.nvTarefa.data_limite,
+                        description: this.nvTarefa.description,
+                        level: this.nvTarefa.nivel
+                    }
+                    const config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+
+                    axios.post(this.urlBase + 'tarefa', data, config)
+                        .then(response => {
+                            console.log(response)
+                            this.sucesso = "Tarefa cadastrada com sucesso"
+                            setTimeout(() => {
+                                this.sucesso = ''
+                            }, "5000")
+                            this.montar()
+                            this.nvTarefa = {}
+                        })
+                        .catch(error => {
+                            this.error = error.response.data.msg ? error.response.data.msg : 'Um erro inesperado ocorreu'
+                            setTimeout(() => {
+                                this.error = ''
+                            }, "5000")
+                        })
+                },
+
+                verificarExclusao(tarefa) {
+                    this.id = tarefa.id
+                },
+
+                excluir() {
+                    console.log(this.id)
+                    const config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+                    axios
+                        .delete(this.urlBase + "tarefa/" + this.id, config)
+                        .then((response) => {
+                            this.sucesso = "Tarefa excluida com sucesso"
+                            setTimeout(() => {
+                                this.sucesso = ''
+                            }, "5000")
+                            this.urlPaginacao = 'page=1'
+                            this.montar()
+                            console.log(response);
+                        })
+                        .catch((error) => {
+                            this.error = error.response.data.msg ? error.response.data.msg : 'Um erro inesperado ocorreu'
+                            setTimeout(() => {
+                                this.error = ''
+                            }, "5000")
+                        });
+
+                },
+
+                alterarSenha() {
+                    let data = {
+                        _method: 'patch',
+                        senha_antiga: this.senhaAntiga,
+                        senha_nova: this.senhaNova
+                    }
+                    const config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+
+                    axios.post(this.urlBase + 'senha', data, config)
+                        .then(response => {
+                            console.log(response)
+                            this.resultadoAlterarSenha.sucesso = "Senha alterada com sucesso"
+
+
+                        })
+                        .catch(error => {
+                            this.resultadoAlterarSenha.erros = error.response.data.msg
+
+                        })
+                },
+
+            },
+            watch: {
+                    buscar() {
+                        this.montar(this.buscar)
+                    },
+
+                },
+
+            created() {
+                this.me()
                 this.montar()
 
+            },
+            updated() {
+                    if (this.nvTarefa.nome != '' && this.nvTarefa.data_limite != undefined && this.nvTarefa.nivel != undefined && this.nvTarefa.description != '') {
+                        this.salvarHabilitar = false
+                    } else {
+                        this.salvarHabilitar = true
+                    }
+
+                    if (this.name != '' && this.data_limite != '' && this.description != '') {
+                        this.alterarHabilitar = false
+                    } else {
+                        this.alterarHabilitar = true
+                    }
+                    this.me()
             }
-            },
 
-            formataDataTempo(data_americana) {
-                let data_brasileira = data_americana.split('-').reverse().join('/');
-                return data_brasileira
-            },
-            verificaStatus(status){
-                return status == 0 ?"Pendente":"Concluido" 
-            },
-            verificaAtrasado(atraso){
-                return atraso == 0 ?"Não":"Sim" 
-            },
-            verficaPrioridade(level){
-                return level == 0 ?"Baixa":"Alta" 
-            },
-    
-            verificarAtualizacao(tarefa){
-            
-               this.teste = tarefa
-               this.name = tarefa.name
-               this.description = tarefa.description
-               this.data_limite = tarefa.data_limite
-               this.id = tarefa.id
-            },
-            alterar() {
-                console.log(this.id)
-                let data = {
-                    name:this.name,
-                    data_limite:this.data_limite,
-                    description:this.description,
-                    _method:'put'
-                    }
-                    const config = {
-                    headers:{
-                        'Content-Type':'multipart/form-data',
-                        'Accept' : 'application/json',
-                        'Authorization' : this.token
-
-                    }
-                    }
-            
-                    axios.post(this.urlBase+'tarefa/'+this.id,data,config)
-                        .then(response=>{
-                          console.log(response)
-                          this.sucesso = "Tarefa atualizada com sucesso"
-                          setTimeout(() => {
-                            this.sucesso = ''
-                            }, "5000")     
-                          this.montar()
-                        })
-                        .catch( error=>{
-                           this.error = error.response.data.msg ? error.response.data.msg: 'Um erro inesperado ocorreu'
-                             setTimeout(() => {
-                            this.error = ''
-                            }, "5000")   
-                        })
-
-            },
-            verificarConclusao(tarefa){
-                this.id = tarefa.id
-            },
-            concluir() {
-                  let data = {
-                    _method:'patch'
-                    }
-                    const config = {
-                    headers:{
-                        'Content-Type':'multipart/form-data',
-                        'Accept' : 'application/json',
-                        'Authorization' : this.token
-                    }
-                    }
-            
-                    axios.post(this.urlBase+'concluir/'+this.id,data,config)
-                        .then(response=>{
-                          console.log(response)
-                           this.sucesso = "Tarefa concluida com sucesso"
-                          setTimeout(() => {
-                            this.sucesso = ''
-                            }, "5000")        
-                          this.montar()
-                        })
-                        .catch( error=>{
-                           this.error = error.response.data.msg ? error.response.data.msg: 'Um erro inesperado ocorreu'
-                             setTimeout(() => {
-                            this.error = ''
-                            }, "5000")   
-                        })
-                       
-            },
-            exibir(tarefa) {
-
-                this.tarefa = tarefa
-
-            },
-            salvar() {
-              console.log(this.nvTarefa)
-            let data = {
-                    name:this.nvTarefa.nome,
-                    data_limite:this.nvTarefa.data_limite,
-                    description:this.nvTarefa.description,
-                    level:this.nvTarefa.nivel
-                    }
-                    const config = {
-                    headers:{
-                        'Content-Type':'multipart/form-data',
-                        'Accept' : 'application/json',
-                        'Authorization' : this.token
-                    }
-                    }
-            
-                    axios.post(this.urlBase+'tarefa',data,config)
-                        .then(response=>{
-                          console.log(response)
-                          this.sucesso = "Tarefa cadastrada com sucesso"
-                          setTimeout(() => {
-                            this.sucesso = ''
-                            }, "5000")        
-                          this.montar()
-                          this.nvTarefa = {}
-                        })
-                        .catch( error=>{
-                           this.error = error.response.data.msg ? error.response.data.msg: 'Um erro inesperado ocorreu'
-                             setTimeout(() => {
-                            this.error = ''
-                            }, "5000")   
-                        })
-            },
-            verificarExclusao(tarefa){
-            this.id = tarefa.id
-            },
-            excluir(){
-                console.log(this.id)
-                const config = {
-                    headers:{
-                        'Content-Type':'multipart/form-data',
-                        'Accept' : 'application/json',
-                        'Authorization' : this.token
-                    }
-                    }
-             axios
-                    .delete(this.urlBase + "tarefa/" +this.id,config)
-                    .then((response) => {
-                        this.sucesso = "Tarefa excluida com sucesso"
-                          setTimeout(() => {
-                            this.sucesso = ''
-                            }, "5000") 
-                    this.urlPaginacao='page=1'
-                     this.montar()
-                    console.log(response);
-                    })
-                    .catch((error) => {
-                        this.error = error.response.data.msg ? error.response.data.msg: 'Um erro inesperado ocorreu'
-                        setTimeout(() => {
-                            this.error = ''
-                            }, "5000") 
-                    });
-                
-                    },
-            alterarSenha(){
-                        let data = {
-                    _method:'patch',
-                    senha_antiga:this.senhaAntiga,
-                    senha_nova:this.senhaNova
-                    }
-                    const config = {
-                    headers:{
-                        'Content-Type':'multipart/form-data',
-                        'Accept' : 'application/json',
-                        'Authorization' : this.token
-                    }
-                    }
-            
-                    axios.post(this.urlBase+'senha',data,config)
-                        .then(response=>{
-                          console.log(response)
-                           this.resultadoAlterarSenha.sucesso = "Senha alterada com sucesso"
-                       
-                          
-                        })
-                        .catch( error =>{
-                            this.resultadoAlterarSenha.erros = error.response.data.msg
-                    
-                        })
-                    },
-
-        },
-        watch:{
-            buscar(){
-                this.montar(this.buscar)
-            },
-         
-        },
-   
-        created(){
-            this.me()
-            this.montar()
-
-           
-        },
-        updated(){
-          if(this.nvTarefa.nome != '' && this.nvTarefa.data_limite !=undefined && this.nvTarefa.nivel != undefined && this.nvTarefa.description != '' ){
-            this.salvarHabilitar = false
-          } else{
-            this.salvarHabilitar = true
-          }
-
-          if(this.name != '' && this.data_limite !='' && this.description != '' ){
-            this.alterarHabilitar = false
-          } else{
-            this.alterarHabilitar = true
-          }
-          this.me()
-        }
-
-    }
+            }
 
 
-   /* axios.interceptors.request.use(
+            /* axios.interceptors.request.use(
     config =>{
         config.headers.Accept = 'application/json'
         let token = document.cookie.split(';').find(indice =>{
@@ -865,7 +883,7 @@ axios.interceptors.response.use(
         }
         return Promise.reject(error)
     }
-)  */  
+)  */
 </script>
 
 <style scoped>
