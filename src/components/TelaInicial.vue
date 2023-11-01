@@ -530,13 +530,11 @@ import axios from "axios"
                     axios
                         .post(url, data, config)
                         .then(() => {
-                            this.$router.push('/')
+                            window.location.replace('https://gestao-tarefa-front.vercel.app/#/')
                         })
-                        .catch(() => {
-                            (erros) => {
-                                console.log(erros);
-                            };
-                        });
+                        .catch(error => {
+                                console.log(error)
+                            })
 
                 },
 
@@ -576,16 +574,16 @@ import axios from "axios"
                                         .catch(error =>{
                                             if (error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed'){
                                               
-                                                window.location.replace('https://gestao-tarefa-front.vercel.app/#//')
+                                                window.location.replace('https://gestao-tarefa-front.vercel.app/#/')
                                             }
                                          })
                                 }else{
-                                    window.location.replace('https://gestao-tarefa-front.vercel.app/#//')
+                                    window.location.replace('https://gestao-tarefa-front.vercel.app/#/')
                                 } 
                             })
 
                     } else {
-                        window.location.replace('https://gestao-tarefa-front.vercel.app/#//')
+                        window.location.replace('https://gestao-tarefa-front.vercel.app/#/')
                     }
                 },
 
