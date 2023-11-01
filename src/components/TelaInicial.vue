@@ -558,18 +558,34 @@ import axios from "axios"
                             })
                             .catch(error => {
                                 if (error.response.status == 401 && error.response.data.message == 'Token has expired') {
+                                    axios.interceptors.request.use(
+                                config =>{
+                                    config.headers.Accept = 'application/json'
+                                    config.headers.Authorization = this.token
+                                    return config
+                                        },
+                                        error =>{
+                                            return Promise.reject(error)
+                                        }
+                                    )
                                     axios.post('https://tarefasapi-8a24ead464dc.herokuapp.com/api/refresh/')
                                         .then(response => {
                                             document.cookie = 'token=' + response.data.token
                                             window.location.reload()
                                         })
-                                } else if (error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed') {
-                                    this.$router.push('/')
-                                }
+                                        .catch(error =>{
+                                            if (error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed'){
+                                              
+                                                window.location.replace('https://gestao-tarefa-front.vercel.app/#//')
+                                            }
+                                         })
+                                }else{
+                                    window.location.replace('https://gestao-tarefa-front.vercel.app/#//')
+                                } 
                             })
 
                     } else {
-                        this.$router.replace('/')
+                        window.location.replace('https://gestao-tarefa-front.vercel.app/#//')
                     }
                 },
 
