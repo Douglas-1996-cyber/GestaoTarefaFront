@@ -9,19 +9,19 @@
                   <p class="text-muted">Informe os dados</p>
                   <div class="input-group mb-3">
                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                    <input type="email" class="form-control" placeholder="Nome" v-model="nome">
+                    <input type="nome" name="nome" class="form-control" placeholder="Nome" v-model="dados.nome">
                   </div>
                   <div class="input-group mb-3">
                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                    <input type="email" class="form-control" placeholder="Email" v-model="email">
+                    <input type="email"  name="email" class="form-control" placeholder="Email" v-model="dados.email">
                   </div>
                   <div class="input-group mb-4">
                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    <input type="password" class="form-control" placeholder="Senha" v-model="password">
+                    <input type="password" class="form-control" name="password" placeholder="Senha" v-model="dados.password">
                   </div>
                   <div class="row">
                     <div class="col-6">
-                      <button type="button" class="btn btn-primary px-4"   data-bs-toggle="modal" data-bs-target="#registrado" :disabled="habilitar" @click="registrar">Cadastrar</button>
+                      <button type="button" class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#registrado"  :disabled="habilitar"  @click="registrar">Cadastrar</button>
                     </div>
                   </div>
                 </div>
@@ -47,8 +47,8 @@
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Cadastro</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body" v-if="!erros">
-                Cadastro realizado com sucesso. Seja bem vindo(a) {{nome}}. 
+              <div class="modal-body" v-if="msg">
+                {{ msg }} 
                 <p>Realize o seu login.</p>
               </div>
               <div class="modal-body" v-else>
@@ -69,53 +69,57 @@
       export default{
         name: 'CadastroComponent',
         data:()=>({
-          nome:'',
+          dados:{
           email:'',
           password:'',
-          habilitar:false,
+          nome:''
+        },
+          habilitar:true,
           urlBase: 'https://tarefasapi-8a24ead464dc.herokuapp.com/api/',
-          erros : ''
+          erros : '',
+          msg:'',
+          classe:''
         }),
       
         methods:{
               registrar(){
-          
             const config = {
                 headers:{
                     'Content-Type':'application/x-www-form-urlencoded',
                 }   
               }
               let data = {
-                name:this.nome,
-                email:this.email,
-                password:this.password
+                name:this.dados.nome,
+                email:this.dados.email,
+                password:this.dados.password
               }
               let url = this.urlBase+'register'
                 axios.post(url,data,config)
-                    .then((response) => {
-                      console.log(response)
+                    .then(() => {
+                    this.msg = 'Cadastro realizado com sucesso. Seja bem vindo(a) '+ this.dados.nome
                     })
                     .catch(error => {
-                     
                       if(error.response != undefined){
                          this.erros = error.response.data.errors.email 
                          this.erros += error.response.data.errors.password  
                       }else{
                         this.erros = error.message
-                        console.log(this.erros)
                       }
                          
                     });
                   
               }
         },
+
+
         updated(){
-          if(this.email!='' && this.password!=='' && this.nome!==''){
+          if(this.dados.email && this.dados.nome && this.dados.password ){
             this.habilitar = false
           }else{
             this.habilitar = true
           }
         }
+
       }
       </script>
       

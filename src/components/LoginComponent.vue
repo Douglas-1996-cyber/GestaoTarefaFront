@@ -20,10 +20,10 @@
               </div>
               <div class="row">
                 <div class="col-6">
-                  <button type="button" class="btn btn-primary px-4" :disabled="habilitar" @click="login">
+                  <button type="button" class="btn btn-primary px-4"  :disabled="habilitar" @click="login">
                     Login
                   </button>
-                  <div class="lds-ellipsis" v-if="loading"><div></div><div></div><div></div><div></div></div>
+                  <span  v-if="loading" class="loader"></span> 
                 </div>
               </div>
             </div>
@@ -87,7 +87,7 @@
                     .catch( (error) => {
                       this.erros = error.response.data.erro ? error.response.data.erro : "Ocorreu um erro inesperado, entre em contado com o desenvolvedor."
                       this.loading = false
-                      
+                    
                   })  
   
              
@@ -115,63 +115,30 @@
    .botao:hover{
         background-color: rgb(5, 96, 231);
        }
-
-       .lds-ellipsis {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-ellipsis div {
-  position: absolute;
-  top: 33px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: rgb(5, 96, 231);
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
-}
-.lds-ellipsis div:nth-child(1) {
-  left: 8px;
-  animation: lds-ellipsis1 0.6s infinite;
-}
-.lds-ellipsis div:nth-child(2) {
-  left: 8px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-.lds-ellipsis div:nth-child(3) {
-  left: 32px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-.lds-ellipsis div:nth-child(4) {
-  left: 56px;
-  animation: lds-ellipsis3 0.6s infinite;
-}
-@keyframes lds-ellipsis1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@keyframes lds-ellipsis3 {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
-@keyframes lds-ellipsis2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
-  }
+       .loader {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        position: relative;
+        border: 2px solid;
+        border-color: rgba(146, 145, 150, 0.15) rgba(5, 96, 231, 0.945) rgba(14, 161, 219, 0.35) rgba(104, 148, 230, 0.5);
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+        margin-left: 10px;
+        
 }
 
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
+
+ 
 
 
   </style>
