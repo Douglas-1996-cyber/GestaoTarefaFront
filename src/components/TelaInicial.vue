@@ -555,31 +555,12 @@ import axios from "axios"
                                 this.nomeUsuario = response.data.name
                             })
                             .catch(error => {
-                                if (error.response.status == 401 && error.response.data.message == 'Token has expired') {
-                                    axios.interceptors.request.use(
-                                config =>{
-                                    config.headers.Accept = 'application/json'
-                                    config.headers.Authorization = this.token
-                                    return config
-                                        },
-                                        error =>{
-                                            return Promise.reject(error)
-                                        }
-                                    )
-                                    axios.post('https://tarefasapi-8a24ead464dc.herokuapp.com/api/refresh/')
-                                        .then(response => {
-                                            document.cookie = 'token=' + response.data.token
-                                            window.location.reload()
-                                        })
-                                        .catch(error =>{
-                                            if (error.response.status == 500 && error.response.data.message == 'Token has expired and can no longer be refreshed'){
-                                              
-                                                window.location.replace('https://gestao-tarefa-front.vercel.app/#/')
-                                            }
-                                         })
-                                }else{
+                                if(error.response){
                                     window.location.replace('https://gestao-tarefa-front.vercel.app/#/')
-                                } 
+                                }
+                             //Realizar a implementação do refresh.   
+                                    
+                                
                             })
 
                     } else {
